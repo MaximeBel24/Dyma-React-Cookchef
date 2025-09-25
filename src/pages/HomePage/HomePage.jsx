@@ -1,11 +1,12 @@
-import styles from './Content.module.scss';
+import styles from './HomePage.module.scss';
 import Recipe from './components/Recipe/Recipe.jsx';
-import {data} from "../../data/recipes.js";
 import {useState} from "react";
+import Loading from "../../components/Loading/Loading.jsx";
 
-function Content() {
+function HomePage() {
 
-    const recipes = data;
+    const [recipes, setRecipes] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState('');
 
     function handleInput(e) {
@@ -21,16 +22,20 @@ function Content() {
                     <i className="fa-solid fa-magnifying-glass mr-15"></i>
                     <input onInput={handleInput} className="flex-fill" type="text" placeholder={"Rechercher"}/>
                 </div>
-                <div className={styles.grid}>
-                    {recipes
-                        .filter((r) => r.title.toLowerCase().startsWith(filter))
-                        .map((r) => (
-                        <Recipe key={r._id} title={r.title} image={r.image}/>
-                    ))}
-                </div>
+                {isLoading && !recipes.length ? (
+                    <Loading />
+                ) : (
+                    <div className={styles.grid}>
+                        {recipes
+                            .filter((r) => r.title.toLowerCase().startsWith(filter))
+                            .map((r) => (
+                                <Recipe key={r._id} title={r.title} image={r.image}/>
+                            ))}
+                    </div>
+                )}
             </div>
         </div>
     );
 }
 
-export default Content;
+export default HomePage;
