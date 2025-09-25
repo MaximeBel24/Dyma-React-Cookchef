@@ -38,6 +38,12 @@ function HomePage() {
         setFilter(filter.trim().toLowerCase());
     }
 
+    function updateRecipe(updateRecipe) {
+        setRecipes(
+            recipes.map((r) => (r._id === updateRecipe._id ? updateRecipe : r))
+        )
+    }
+
     return (
         <div className="flex-fill container d-flex flex-column p-20">
             <h1 className="my-30">Découvrez nos nouvelles recettes</h1>
@@ -53,7 +59,11 @@ function HomePage() {
                         {recipes
                             .filter((r) => r.title.toLowerCase().startsWith(filter))
                             .map((r) => (
-                                <Recipe key={r._id} title={r.title} image={r.image}/>
+                                <Recipe
+                                    key={r._id}
+                                    recipe={r}
+                                    toggleLikedRecipe={updateRecipe}
+                                />
                             ))}
                     </div>
                 )}
