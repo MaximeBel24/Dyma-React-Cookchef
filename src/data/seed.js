@@ -1,3 +1,5 @@
+import {data} from "./recipes.js";
+
 export async function seedRecipes() {
     const response = await fetch('https://restapi.fr/api/recipes');
     const recipes = await response.json();
