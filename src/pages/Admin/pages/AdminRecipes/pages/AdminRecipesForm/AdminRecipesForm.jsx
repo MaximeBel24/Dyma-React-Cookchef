@@ -1,16 +1,18 @@
-import styles from './RecipeForm.module.scss';
+import styles from './AdminRecipesForm.module.scss';
 import * as yup from 'yup';
-import {useContext} from "react";
-import {ApiContext} from "../../../../context/ApiContext.jsx";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup/src/index.js";
+import {createRecipe, updateRecipe} from "../../../../../../apis";
+import {useLoaderData, useNavigate} from "react-router";
 
-function RecipeForm() {
-    const BASE_URL = useContext(ApiContext);
+function AdminRecipesForm() {
+
+    const recipe = useLoaderData();
+    const navigate = useNavigate();
 
     const defaultValues = {
-        title: '',
-        image: ''
+        title: recipe ? recipe.title : '',
+        image: recipe ? recipe.image : ''
     }
 
     const recipeSchema = yup.object({
@@ -40,20 +42,15 @@ function RecipeForm() {
     async function submit(values) {
         try {
             clearErrors();
-            const response = await fetch(BASE_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(values)
-            });
-            if (response.ok) {
-                reset(defaultValues);
-            } else {
-                setErreor('generic', {
-                    type: 'generic',
-                    message: 'Il y a eu une erreur',
+            if (recipe) {
+                await updateRecipe({
+                    ...values,
+                    _id: recipe._id,
                 });
+                navigate('/admin/recipes/list')
+            } else {
+                await createRecipe(values);
+                reset(defaultValues);
             }
         } catch (e) {
             setErreor('generic', { type: 'generic', message: 'Il y a eu une erreur : ', e})
@@ -78,10 +75,12 @@ function RecipeForm() {
             </div>
             {errors.generic && <p className={"form-error"}>{errors.generic.message}</p>}
             <div>
-                <button className={"btn btn-primary"}>Sauvegarder</button>
+                <button disabled={isSubmitting} className={"btn btn-primary"}>
+                    Sauvegarder
+                </button>
             </div>
         </form>
     );
 }
 
-export default RecipeForm;
+export default AdminRecipesForm;

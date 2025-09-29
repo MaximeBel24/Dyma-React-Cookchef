@@ -24,6 +24,11 @@ ul {
   margin: 0;
 }
 
+a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
 img {
   max-width: 100%;
 }
